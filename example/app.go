@@ -1,4 +1,4 @@
-package _examples
+package example
 
 import (
 	"context"
@@ -30,7 +30,6 @@ var breaker *entities.CircuitBreaker
 
 func (a *App) Run() error {
 	var err error
-	//webApp := web.New()
 	fiberApp := fiber.New()
 
 	//client := &http.Client{}
