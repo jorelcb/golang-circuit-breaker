@@ -2,7 +2,7 @@ package circuit_breaker
 
 import (
 	"github.com/cucumber/godog"
-	"github.com/github.com/jorelcb/golang-circuit-breaker/pkg/circuit_breaker/domain/model/tests/commons"
+	"github.com/jorelcb/golang-circuit-breaker/pkg/circuit_breaker/domain/model/tests/commons"
 	"testing"
 )
 

@@ -1,7 +1,7 @@
 package entities
 
 import (
-	"github.com/github.com/jorelcb/golang-circuit-breaker/pkg/circuit_breaker/domain/model/entities/errors"
+	"github.com/jorelcb/golang-circuit-breaker/pkg/circuit_breaker/domain/model/entities/errors"
 	"time"
 )
 

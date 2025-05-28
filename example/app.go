@@ -2,8 +2,8 @@ package example
 
 import (
 	"context"
-	"github.com/github.com/jorelcb/golang-circuit-breaker/pkg/circuit_breaker/domain/model/entities"
 	"github.com/gofiber/fiber/v2"
+	"github.com/jorelcb/golang-circuit-breaker/pkg/circuit_breaker/domain/model/entities"
 	"log"
 	"net/http"
 	"os"

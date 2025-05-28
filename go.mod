@@ -1,4 +1,4 @@
-module github.com/github.com/jorelcb/golang-circuit-breaker
+module github.com/jorelcb/golang-circuit-breaker
 
 go 1.23.0
 
