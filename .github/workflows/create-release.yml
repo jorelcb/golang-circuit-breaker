@@ -1,0 +1,109 @@
+# Nombre del Workflow que aparecerá en la pestaña "Actions" de GitHub
+name: Create Release
+
+# Define cuándo se ejecutará el workflow
+on:
+  push:
+    tags:
+      - 'v*' # Se activa con tags que comiencen con 'v', por ejemplo: v1.0, v2.0.1, v0.3.0-alpha
+
+# Define los trabajos (jobs) que se ejecutarán como parte del workflow
+jobs:
+  build_and_release: # Nombre del job
+    name: Create Release # Nombre descriptivo del job que se muestra en la UI de GitHub
+    runs-on: ubuntu-latest # Especifica que el job se ejecutará en la última versión de Ubuntu disponible
+
+    # Pasos que se ejecutarán secuencialmente dentro del job
+    steps:
+      # Paso 1: Checkout del código del repositorio
+      # Esta acción descarga el código fuente en el runner para que el workflow pueda acceder a él.
+      - name: Checkout code
+        uses: actions/checkout@v4 # Utiliza la acción oficial de GitHub para checkout
+        with:
+          # 'fetch-depth: 0' asegura que se descargue todo el historial de commits y tags.
+          # Esto es importante si planeas generar notas de release basadas en el historial de commits.
+          fetch-depth: 0
+
+      # Paso 2: Crear la Release en GitHub
+      # Utiliza la acción 'actions/create-release' para crear una nueva release.
+      - name: Create Release
+        id: create_release # Asigna un ID a este paso para poder referenciar sus salidas (outputs)
+        uses: actions/create-release@v1
+        env:
+          # GITHUB_TOKEN es un token secreto especial proporcionado por GitHub Actions.
+          # Se utiliza para autenticar las solicitudes a la API de GitHub en nombre del workflow.
+          # No necesitas crear este secreto manualmente; GitHub lo proporciona automáticamente.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          # tag_name: El nombre del tag que activó el workflow.
+          # ${{ github.ref_name }} es una variable de contexto que contiene el nombre del tag o rama.
+          tag_name: ${{ github.ref_name }}
+
+          # release_name: El título de la release que se mostrará en GitHub.
+          # Aquí se usa el nombre del tag como parte del título.
+          release_name: Release ${{ github.ref_name }}
+
+          # body: El contenido o descripción de la release.
+          # Puedes escribir texto estático, usar variables de GitHub, o generar esta sección dinámicamente.
+          # Ejemplo de cuerpo de release más detallado:
+          # body: |
+          #   ## 🎉 Nueva Release: ${{ github.ref_name }} 🎉
+          #
+          #   Consulta los cambios completos en el [changelog](CHANGELOG.md) (si tienes uno).
+          #
+          #   **Mensaje del tag (si existe):**
+          #   ${{ github.event.head_commit.message }}
+          #
+          #   Para generar notas de release automáticamente basadas en commits, considera
+          #   usar acciones como 'release-drafter/release-drafter' o
+          #   'anton-bondarev/automatic-relases'.
+          body: |
+            Nueva release ${{ github.ref_name }} ha sido publicada.
+            *(Puedes personalizar este mensaje o usar una acción para generar un changelog detallado aquí)*
+
+          # draft: Si se establece en 'true', la release se creará como un borrador (draft)
+          # y no se publicará inmediatamente. Deberás publicarla manualmente desde la UI de GitHub.
+          # Por defecto es 'false'.
+          draft: false
+
+          # prerelease: Si se establece en 'true', marca la release como una "pre-release".
+          # Útil para versiones alfa, beta, RC, etc.
+          # Por defecto es 'false'.
+          prerelease: false # Cambia a true si, por ejemplo, el tag incluye '-beta', '-alpha', etc.
+
+      # --- Opcional: Subir artefactos a la Release ---
+      # Si tu proceso de build genera artefactos (ej. binarios compilados, archivos .zip, .jar, .whl),
+      # puedes subirlos a la release creada.
+      # Primero, necesitarías un paso para construir/empaquetar tus artefactos. Ejemplo:
+      # - name: Build project (ejemplo)
+      #   run: |
+      #     npm install
+      #     npm run build
+      #     # Suponiendo que esto crea un archivo ./dist/my-library.zip
+
+      # - name: Upload Release Asset (ejemplo)
+      #   id: upload-release-asset
+      #   uses: actions/upload-release-asset@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     # upload_url se obtiene de la salida del paso 'create_release'.
+      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
+      #     # asset_path: Ruta al archivo que quieres subir.
+      #     asset_path: ./dist/my-library.zip # Cambia esto a la ruta de tu artefacto
+      #     # asset_name: Nombre que tendrá el archivo en la release de GitHub.
+      #     asset_name: my-library-${{ github.ref_name }}.zip # Ejemplo de nombre dinámico
+      #     # asset_content_type: El tipo MIME del archivo.
+      #     asset_content_type: application/zip
+
+      # --- Opcional: Generar Notas de Release Automáticamente ---
+      # Puedes usar herramientas como Release Drafter o conventional-changelog para generar
+      # notas de release más ricas basadas en tus commits.
+      # Ejemplo usando Release Drafter (requiere configuración adicional):
+      # - name: Draft Release Notes
+      #   uses: release-drafter/release-drafter@v6 # O la versión más reciente
+      #   with:
+      #     # publish: true # Si quieres que publique directamente la release que draftó
+      #     # config-name: release-drafter.yml # Si tienes un archivo de configuración para Release Drafter
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
