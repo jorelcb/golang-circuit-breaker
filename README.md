@@ -6,23 +6,23 @@
 
 ## Installation
 
-`go get github.com/github.com/jorelcb/golang-circuit-breaker`
+`go get github.com/jorelcb/golang-circuit-breaker`
 
 By default, `go get` will bring in the latest tagged release version of the Library.
 
 ```shell
-go get github.com/github.com/jorelcb/golang-circuit-breaker/v1.0.1
+go get github.com/jorelcb/golang-circuit-breaker/v1.0.1
 ```
 To get a specific release version of the Library use `@<tag>` in your `go get` command.
 
 ```shell
-go get github.com/github.com/jorelcb/golang-circuit-breaker@1.1.0
+go get github.com/jorelcb/golang-circuit-breaker@1.1.0
 ```
 
 To get the latest SDK repository change use `@latest`.
 
 ```shell
-go get github.com/github.com/jorelcb/golang-circuit-breaker@latest
+go get github.com/jorelcb/golang-circuit-breaker@latest
 ```
 
 ## Getting started
